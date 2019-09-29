@@ -1,0 +1,57 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://scripts/Player.gd" type="Script" id=1]
+[ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://ground.png" type="Texture" id=3]
+
+[sub_resource type="SpriteFrames" id=1]
+animations = [ {
+"frames": [ ExtResource( 2 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+} ]
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 22.0767
+
+[sub_resource type="PhysicsMaterial" id=3]
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 290.054, 24 )
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Player" type="RigidBody2D" parent="."]
+position = Vector2( 40, 225 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="Player"]
+frames = SubResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource( 2 )
+
+[node name="WallContainer" type="Node" parent="."]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="WallContainer"]
+position = Vector2( 447, 402 )
+physics_material_override = SubResource( 3 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="WallContainer/StaticBody2D"]
+use_parent_material = true
+position = Vector2( -147.5, 1.35068e-005 )
+rotation = -3.14159
+scale = Vector2( 3.11328, -1 )
+texture = ExtResource( 3 )
+normal_map = ExtResource( 3 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallContainer/StaticBody2D"]
+position = Vector2( -149, 0 )
+shape = SubResource( 4 )
