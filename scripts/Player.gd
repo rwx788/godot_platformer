@@ -41,7 +41,7 @@ func _physics_process(delta):
 			# Do not allow wall jumps from the same wall
 			for i in get_slide_count():
 				var collision = get_slide_collision(i)
-				if collision.collider_id != prev_vert_wall:	
+				if collision.collider_id != prev_vert_wall and collision.collider.is_class('StaticBody2D'):	
 					process_jump()
 					prev_vert_wall = collision.collider_id
 					break	
