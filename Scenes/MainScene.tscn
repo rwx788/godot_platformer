@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scripts/Player.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
@@ -23,10 +23,13 @@ extents = Vector2( 290.054, 24 )
 [sub_resource type="RectangleShape2D" id=5]
 extents = Vector2( 87.054, 27 )
 
+[sub_resource type="RectangleShape2D" id=6]
+extents = Vector2( 25.054, 88 )
+
 [node name="Node2D" type="Node2D"]
 
 [node name="Player" type="KinematicBody2D" parent="."]
-position = Vector2( 62, 361 )
+position = Vector2( 132, 372 )
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
@@ -49,7 +52,7 @@ __meta__ = {
 [node name="WallContainer" type="Node" parent="."]
 
 [node name="StaticBody2D" type="StaticBody2D" parent="WallContainer"]
-position = Vector2( 457, 419 )
+position = Vector2( 517, 454 )
 physics_material_override = SubResource( 3 )
 __meta__ = {
 "_edit_group_": true
@@ -68,7 +71,7 @@ position = Vector2( -149, 0 )
 shape = SubResource( 4 )
 
 [node name="StaticBody2D2" type="StaticBody2D" parent="WallContainer"]
-position = Vector2( 731, 322 )
+position = Vector2( 715, 305 )
 __meta__ = {
 "_edit_group_": true
 }
@@ -78,3 +81,16 @@ texture = ExtResource( 3 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="WallContainer/StaticBody2D2"]
 shape = SubResource( 5 )
+
+[node name="StaticBody2D3" type="StaticBody2D" parent="WallContainer"]
+position = Vector2( 39, 262 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="Sprite" parent="WallContainer/StaticBody2D3"]
+rotation = 1.5708
+texture = ExtResource( 3 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallContainer/StaticBody2D3"]
+shape = SubResource( 6 )
