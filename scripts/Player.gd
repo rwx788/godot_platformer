@@ -44,4 +44,7 @@ func _physics_process(delta):
 				if collision.collider_id != prev_vert_wall and collision.collider.is_class('StaticBody2D'):	
 					process_jump()
 					prev_vert_wall = collision.collider_id
-					break	
+					break
+
+func collide() -> void:
+	pass
