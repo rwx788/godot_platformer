@@ -29,7 +29,6 @@ size = Vector2(174.108, 54)
 position = Vector2(259.152, 370.742)
 motion_mode = 1
 script = ExtResource("1")
-jumping = true
 
 [node name="Sprite2D" type="Sprite2D" parent="Player"]
 position = Vector2(-0.407257, -2.85075)
@@ -52,6 +51,20 @@ texture = ExtResource("2")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AI1"]
 position = Vector2(-1.44354, 0.742004)
 shape = SubResource("2")
+
+[node name="FloorRayCast_1" type="RayCast2D" parent="AI1"]
+position = Vector2(12.799, -0.378998)
+target_position = Vector2(-0.200989, 29.621)
+
+[node name="FloorRayCast_2" type="RayCast2D" parent="AI1"]
+position = Vector2(-15.201, -1.379)
+target_position = Vector2(0, 31)
+
+[node name="WallRayCast_1" type="RayCast2D" parent="AI1"]
+target_position = Vector2(24.799, -0.378998)
+
+[node name="WallRayCast_2" type="RayCast2D" parent="AI1"]
+target_position = Vector2(-28.201, 0.621002)
 
 [node name="WallContainer" type="Node" parent="."]
 
