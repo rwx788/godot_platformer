@@ -16,6 +16,8 @@ public partial class Lemming : CharacterBody2D
 	private RayCast2D _floorRayCast1;
 	private RayCast2D _floorRayCast2;
 
+	// Used to track the previous wall not to change direction multiple times
+	private ulong _prevWallId = 0;
 
 	public override void _Ready()
 	{
@@ -33,25 +35,36 @@ public partial class Lemming : CharacterBody2D
 		else
 			_velocity.Y = 0;
 
-
-
+		// Create arrays for wall and floor RayCast2D nodes.
 		RayCast2D[] wallRays = [_wallRayCast1, _wallRayCast2];
 		RayCast2D[] floorRays = [_floorRayCast1, _floorRayCast2];
-
-		// Use LINQ's Any() method to detect collisions.
-		bool wallDetected = wallRays.Any(ray => ray != null && ray.IsColliding());
-		bool floorDetected = floorRays.Any(ray => ray != null && !ray.IsColliding());
-
-		// If a wall is detected or no floor is detected ahead, reverse direction.
-		if (wallDetected || floorDetected)
+		
+		if (floorRays.Any(ray => ray != null && !ray.IsColliding()))
 		{
 			_direction *= -1;
+			// Reset previous wall ID when turning due to lack of floor.
+			_prevWallId = 0;
 		}
-		// Move horizontally at a constant speed.
+		else
+		{
+			var collidedWallIds = wallRays
+				.Where(ray => ray != null && ray.IsColliding())
+				.Select(ray => ray.GetCollider().GetInstanceId());
+
+			var newWall = collidedWallIds.ToList().FirstOrDefault(collidedWallId => _prevWallId != collidedWallId);
+			if(newWall != 0)
+			{
+				_direction *= -1;
+				_prevWallId = newWall;
+			}
+		}
+
+		// Set horizontal velocity.
 		_velocity.X = WalkSpeed * _direction;
 
 		// Apply the calculated velocity and move the character.
 		Velocity = _velocity;
 		MoveAndSlide();
 	}
+
 }
