@@ -11,13 +11,14 @@ public partial class Player : CharacterBody2D
 	[Export] public int MoveSpeed = 250;
 	[Export] public int JumpForce = 700;
 	[Export] public int Gravity = 1800;
-	[Export] public Vector2 CarryOffset = new Vector2(-50, 0);
 	[Export] public float PickupRange = 50f;
 
 	private RayCast2D _wallRayCastR;
 	private RayCast2D _wallRayCastL;
 	private RayCast2D _floorRayCastL;
 	private RayCast2D _floorRayCastR;
+	
+	private Vector2 _carryOffset = new Vector2(45, 0);
 
 	private ulong _prevVertWall = 0;
 	private int _jumpCount = 0;  // Tracks the number of jumps
@@ -114,7 +115,7 @@ public partial class Player : CharacterBody2D
 		// If carrying an object, update its position relative to the player.
 		if (_carried != null)
 		{
-			_carried.GlobalPosition = GlobalPosition + CarryOffset;
+			_carried.GlobalPosition = GlobalPosition + _carryOffset;
 		}
 
 		// Clamp velocity to MAX_SPEED
@@ -128,20 +129,19 @@ public partial class Player : CharacterBody2D
 		MoveAndSlide();
 	}
 
-	public void Collide()
-	{
-		// Placeholder for additional collision logic
-	}
-
 	private Lemming FindNearbyPickup()
 	{
-		RayCast2D[] wallRays = [_wallRayCastL, _wallRayCastR];
-		
-		var collidedLemming = wallRays
-			.Where(ray => ray != null && ray.IsColliding() && ray.GetCollider() is Lemming)
-			.Select(ray => ray.GetCollider()).FirstOrDefault();
-
-		return collidedLemming as Lemming;
+		if (_wallRayCastL.IsColliding() && _wallRayCastL.GetCollider() is Lemming)
+		{
+			_carryOffset *= Vector2.Left;
+			return _wallRayCastL.GetCollider() as Lemming;
+		}
+		if (_wallRayCastR.IsColliding() && _wallRayCastR.GetCollider() is Lemming)
+		{
+			_carryOffset *= Vector2.Right;
+			return _wallRayCastR.GetCollider() as Lemming;
+		}
+		return null;
 	}
 
 	/// <summary>
