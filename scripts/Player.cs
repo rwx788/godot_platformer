@@ -135,12 +135,14 @@ public partial class Player : CharacterBody2D
 	{
 		if (_wallRayCastL.IsColliding() && _wallRayCastL.GetCollider() is Lemming)
 		{
-			_carryOffset *= Vector2.Left;
+			if (_carryOffset.X > 0)
+				_carryOffset *= Vector2.Left;
 			return _wallRayCastL.GetCollider() as Lemming;
 		}
 		if (_wallRayCastR.IsColliding() && _wallRayCastR.GetCollider() is Lemming)
 		{
-			_carryOffset *= Vector2.Right;
+			if (_carryOffset.X < 0)
+				_carryOffset *= Vector2.Left;
 			return _wallRayCastR.GetCollider() as Lemming;
 		}
 		return null;
