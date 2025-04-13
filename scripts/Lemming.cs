@@ -1,5 +1,7 @@
 using System.Linq;
+using System.Numerics;
 using Godot;
+using Vector2 = Godot.Vector2;
 
 namespace Layka.scripts;
 
@@ -9,22 +11,22 @@ public partial class Lemming : CharacterBody2D
 	[Export] public int Gravity = 1200;
 
 	private Vector2 _velocity = Vector2.Zero;
-	private int _direction = 1; // 1 = right, -1 = left
+	private float _direction = Vector2.Right.X; // 1 = right, -1 = left
 
-	private RayCast2D _wallRayCast1;
-	private RayCast2D _wallRayCast2;
-	private RayCast2D _floorRayCast1;
-	private RayCast2D _floorRayCast2;
+	private RayCast2D _wallRayCastR;
+	private RayCast2D _wallRayCastL;
+	private RayCast2D _floorRayCastL;
+	private RayCast2D _floorRayCastR;
 
 	// Used to track the previous wall not to change direction multiple times
 	private ulong _prevWallId = 0;
 
 	public override void _Ready()
 	{
-		_wallRayCast1 = GetNode<RayCast2D>("WallRayCast_1");
-		_wallRayCast2 = GetNode<RayCast2D>("WallRayCast_2");
-		_floorRayCast1 = GetNode<RayCast2D>("FloorRayCast_1");
-		_floorRayCast2 = GetNode<RayCast2D>("FloorRayCast_2");
+		_wallRayCastR = GetNode<RayCast2D>("WallRayCast_R");
+		_wallRayCastL = GetNode<RayCast2D>("WallRayCast_L");
+		_floorRayCastR = GetNode<RayCast2D>("FloorRayCast_R");
+		_floorRayCastL = GetNode<RayCast2D>("FloorRayCast_L");
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -36,8 +38,8 @@ public partial class Lemming : CharacterBody2D
 			_velocity.Y = 0;
 
 		// Create arrays for wall and floor RayCast2D nodes.
-		RayCast2D[] wallRays = [_wallRayCast1, _wallRayCast2];
-		RayCast2D[] floorRays = [_floorRayCast1, _floorRayCast2];
+		RayCast2D[] wallRays = [_wallRayCastL, _wallRayCastR];
+		RayCast2D[] floorRays = [_floorRayCastL, _floorRayCastR];
 		
 		if (floorRays.Any(ray => ray != null && !ray.IsColliding()))
 		{

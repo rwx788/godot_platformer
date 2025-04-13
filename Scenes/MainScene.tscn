@@ -52,19 +52,19 @@ texture = ExtResource("2")
 position = Vector2(-1.44354, 0.742004)
 shape = SubResource("2")
 
-[node name="FloorRayCast_1" type="RayCast2D" parent="AI1"]
-position = Vector2(12.799, -0.378998)
-target_position = Vector2(-0.200989, 29.621)
-
-[node name="FloorRayCast_2" type="RayCast2D" parent="AI1"]
+[node name="FloorRayCast_L" type="RayCast2D" parent="AI1"]
 position = Vector2(-15.201, -1.379)
 target_position = Vector2(0, 31)
 
-[node name="WallRayCast_1" type="RayCast2D" parent="AI1"]
-target_position = Vector2(24.799, -0.378998)
+[node name="FloorRayCast_R" type="RayCast2D" parent="AI1"]
+position = Vector2(12.799, -0.378998)
+target_position = Vector2(-0.200989, 29.621)
 
-[node name="WallRayCast_2" type="RayCast2D" parent="AI1"]
+[node name="WallRayCast_L" type="RayCast2D" parent="AI1"]
 target_position = Vector2(-28.201, 0.621002)
+
+[node name="WallRayCast_R" type="RayCast2D" parent="AI1"]
+target_position = Vector2(24.799, -0.378998)
 
 [node name="WallContainer" type="Node" parent="."]
 
@@ -90,7 +90,7 @@ shape = SubResource("4")
 
 [node name="Floor" type="Node" parent="."]
 
-[node name="Horizontal_wall" type="StaticBody2D" parent="Floor"]
+[node name="Horizontal_wall" type="StaticBody2D" parent="Floor" groups=["Floor"]]
 position = Vector2(508.855, 451.556)
 
 [node name="Sprite2D" type="Sprite2D" parent="Floor/Horizontal_wall"]
@@ -104,7 +104,7 @@ texture = ExtResource("4")
 position = Vector2(-154.855, -0.556)
 shape = SubResource("RectangleShape2D_7rqgy")
 
-[node name="Horizontal_wall2" type="StaticBody2D" parent="Floor"]
+[node name="Horizontal_wall2" type="StaticBody2D" parent="Floor" groups=["Floor"]]
 position = Vector2(715, 305)
 
 [node name="Sprite2D" type="Sprite2D" parent="Floor/Horizontal_wall2"]
