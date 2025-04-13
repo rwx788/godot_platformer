@@ -30,13 +30,32 @@ public partial class Player : CharacterBody2D
 
 	private bool IsJumping => (_jumpCount != 0);
 
-	private Vector2 ProcessJump(Vector2 velocity, bool wallJump = false)
+	private Vector2 ProcessJump(Vector2 velocity)
 	{
-		velocity.Y = -JumpForce;
-		if (!wallJump || IsCarrying)
+		if (IsOnWall() && !IsCarrying && IsJumping)
 		{
+			// Allow only one wall jump from the same wall
+			var collision = GetLastSlideCollision();
+			if (collision != null && collision.GetCollider() is StaticBody2D collider)
+			{
+				ulong colliderId = collider.GetInstanceId();
+				if (colliderId != _prevVertWall)
+				{
+					velocity.Y = -JumpForce;
+					if (IsCarrying)
+					{
+						_jumpCount++;
+					}
+					_prevVertWall = colliderId;
+				}
+			}
+		}
+		else if (_jumpCount < MaxJumps)
+		{
+			velocity.Y = -JumpForce;
 			_jumpCount++;
 		}
+
 		return velocity;
 	}
 
@@ -75,24 +94,7 @@ public partial class Player : CharacterBody2D
 		// Handle jumping logic
 		if (Input.IsActionJustPressed("jump"))
 		{
-			if (IsOnWall() && !IsCarrying && IsJumping)
-			{
-				// Allow only one wall jump from the same wall
-				var collision = GetLastSlideCollision();
-				if (collision != null && collision.GetCollider() is StaticBody2D collider)
-				{
-					ulong colliderId = collider.GetInstanceId();
-					if (colliderId != _prevVertWall)
-					{
-						velocity = ProcessJump(velocity, true);
-						_prevVertWall = colliderId;
-					}
-				}
-			}
-			else if (_jumpCount < MaxJumps)
-			{
-				velocity = ProcessJump(velocity);
-			}
+			velocity = ProcessJump(velocity);
 		}
 		else if (Input.IsActionJustPressed("pick_up"))
 		{
