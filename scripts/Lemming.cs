@@ -11,16 +11,14 @@ public partial class Lemming : CharacterBody2D
 	[Export] public int Gravity = 1200;
 
 	private Vector2 _velocity = Vector2.Zero;
-	private float _direction = Vector2.Right.X; // 1 = right, -1 = left
+	private float _direction = Vector2.Right.X; // Start with going right
 
 	private RayCast2D _wallRayCastR;
 	private RayCast2D _wallRayCastL;
 	private RayCast2D _floorRayCastL;
 	private RayCast2D _floorRayCastR;
-
-	// Used to track the previous wall not to change direction multiple times
 	private ulong _prevWallId = 0;
-
+	
 	public override void _Ready()
 	{
 		_wallRayCastR = GetNode<RayCast2D>("WallRayCast_R");

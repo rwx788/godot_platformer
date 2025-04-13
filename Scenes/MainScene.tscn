@@ -38,6 +38,20 @@ texture = ExtResource("2")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 shape = SubResource("CircleShape2D_7rqgy")
 
+[node name="FloorRayCast_L" type="RayCast2D" parent="Player"]
+position = Vector2(-15.201, -1.379)
+target_position = Vector2(0, 31)
+
+[node name="FloorRayCast_R" type="RayCast2D" parent="Player"]
+position = Vector2(12.799, -0.378998)
+target_position = Vector2(-0.200989, 29.621)
+
+[node name="WallRayCast_L" type="RayCast2D" parent="Player"]
+target_position = Vector2(-46.152, 0.257996)
+
+[node name="WallRayCast_R" type="RayCast2D" parent="Player"]
+target_position = Vector2(37.848, 0.257996)
+
 [node name="AI1" type="CharacterBody2D" parent="."]
 position = Vector2(403.201, 326.379)
 input_pickable = true

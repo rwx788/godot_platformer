@@ -1,3 +1,4 @@
+using System.Linq;
 using Godot;
 
 namespace Layka.scripts;
@@ -5,25 +6,45 @@ namespace Layka.scripts;
 public partial class Player : CharacterBody2D
 {
 	private const int MaxSpeed = 600;
-	private const int MaxJumps = 2;  // Max number of jumps allowed (1 for regular jump, 1 for double jump)
+	private const int MaxJumps = 2;
 	
 	[Export] public int MoveSpeed = 250;
 	[Export] public int JumpForce = 700;
 	[Export] public int Gravity = 1800;
+	[Export] public Vector2 CarryOffset = new Vector2(-50, 0);
+	[Export] public float PickupRange = 50f;
+
+	private RayCast2D _wallRayCastR;
+	private RayCast2D _wallRayCastL;
+	private RayCast2D _floorRayCastL;
+	private RayCast2D _floorRayCastR;
 
 	private ulong _prevVertWall = 0;
 	private int _jumpCount = 0;  // Tracks the number of jumps
+
+	
+	// Holds the current object being carried (if any)
+	private Lemming _carried = null;
+	private bool IsCarrying => _carried != null;
 
 	private bool IsJumping => (_jumpCount != 0);
 
 	private Vector2 ProcessJump(Vector2 velocity, bool wallJump = false)
 	{
 		velocity.Y = -JumpForce;
-		if (!wallJump)
+		if (!wallJump || IsCarrying)
 		{
 			_jumpCount++;
 		}
 		return velocity;
+	}
+
+	public override void _Ready()
+	{
+		_wallRayCastR = GetNode<RayCast2D>("WallRayCast_R");
+		_wallRayCastL = GetNode<RayCast2D>("WallRayCast_L");
+		_floorRayCastR = GetNode<RayCast2D>("FloorRayCast_R");
+		_floorRayCastL = GetNode<RayCast2D>("FloorRayCast_L");
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -53,7 +74,7 @@ public partial class Player : CharacterBody2D
 		// Handle jumping logic
 		if (Input.IsActionJustPressed("jump"))
 		{
-			if (IsOnWall() && IsJumping)
+			if (IsOnWall() && !IsCarrying && IsJumping)
 			{
 				// Allow only one wall jump from the same wall
 				var collision = GetLastSlideCollision();
@@ -72,6 +93,29 @@ public partial class Player : CharacterBody2D
 				velocity = ProcessJump(velocity);
 			}
 		}
+		else if (Input.IsActionJustPressed("pick_up"))
+		{
+			// If already carrying an object, drop it.
+			if (_carried != null)
+			{
+				DropCarried();
+			}
+			else
+			{
+				// Otherwise, try to pick up a nearby object.
+				Lemming candidate = FindNearbyPickup();
+				if (candidate != null)
+				{
+					Pickup(candidate);
+				}
+			}
+		}
+
+		// If carrying an object, update its position relative to the player.
+		if (_carried != null)
+		{
+			_carried.GlobalPosition = GlobalPosition + CarryOffset;
+		}
 
 		// Clamp velocity to MAX_SPEED
 		velocity.X = Mathf.Clamp(velocity.X, -MaxSpeed, MaxSpeed);
@@ -87,5 +131,33 @@ public partial class Player : CharacterBody2D
 	public void Collide()
 	{
 		// Placeholder for additional collision logic
+	}
+
+	private Lemming FindNearbyPickup()
+	{
+		RayCast2D[] wallRays = [_wallRayCastL, _wallRayCastR];
+		
+		var collidedLemming = wallRays
+			.Where(ray => ray != null && ray.IsColliding() && ray.GetCollider() is Lemming)
+			.Select(ray => ray.GetCollider()).FirstOrDefault();
+
+		return collidedLemming as Lemming;
+	}
+
+	/// <summary>
+	/// Picks up the specified target.
+	/// </summary>
+	private void Pickup(Lemming target)
+	{
+		_carried = target;
+		_carried.SetPhysicsProcess(false);
+
+	}
+
+	private void DropCarried()
+	{
+		if (_carried == null) return;
+		_carried.SetPhysicsProcess(true);
+		_carried = null;
 	}
 }
